@@ -127,6 +127,12 @@ uv run --project apps/api --python 3.12 --locked --extra dev \
 Python 3.12와 3.13에서 각각 동기화해 OpenAPI 계약과 결정론적 테스트를 확인하고,
 별도 작업에서 같은 잠금 파일로 API 컨테이너를 빌드합니다.
 
+Cycle 04 원격 실행인
+[Verify #30418181319](https://github.com/lulupang2/QuakeCurrent/actions/runs/30418181319)에서
+두 Python 버전의 계약 검사, 잠금 기반 API 컨테이너, 기존 웹·브라우저 검증이
+모두 통과했습니다. 이 결과는 재현 가능한 빌드와 테스트의 증거이며 실제 배포나
+운영 성능을 의미하지 않습니다.
+
 ## OpenAPI 계약 갱신
 
 REST 계약의 흐름은 `FastAPI → openapi.json → TypeScript`입니다. 서버를 실행하지

@@ -370,7 +370,7 @@ const cycleFourStages = [
   },
   {
     name: "REVIEW",
-    body: "새 환경에서 Python 3.12.13과 3.13.12를 각각 설치해 OpenAPI 스냅샷과 결정론적 API 테스트를 검증했다. 원격 CI와 컨테이너 검증은 아직 실행 전이므로 통과로 기록하지 않았다.",
+    body: "새 환경에서 Python 3.12.13과 3.13.12를 각각 설치해 OpenAPI 스냅샷과 결정론적 API 테스트를 검증했다. 공개 CI에서도 두 Python 버전, 잠금 기반 컨테이너, 기존 웹 검증이 모두 통과했다.",
   },
 ];
 
@@ -412,8 +412,8 @@ const cycleFourChecks = [
   },
   {
     label: "CI",
-    value: "PENDING",
-    note: "공개 저장소 push 후 확인",
+    value: "PASS",
+    note: "API 행렬 · 컨테이너 · 웹",
   },
 ];
 
@@ -440,7 +440,7 @@ const cycleFourFindings = [
     number: "C4-R04",
     title: "로컬 Docker daemon이 실행 중이 아니어서 컨테이너 빌드를 검증할 수 없었다.",
     resolution:
-      "로컬 통과로 과장하지 않고 PENDING으로 남겼다. 공개 저장소의 CI container 작업에서 동일한 lock 기반 빌드를 확인한다.",
+      "로컬 통과로 과장하지 않고 공개 저장소의 CI container 작업에서 동일한 lock 기반 빌드와 비루트 실행을 확인했다.",
   },
 ];
 
@@ -687,7 +687,7 @@ export default function BuildLogPage() {
           className="cycle-two-review"
         >
           <header className="cycle-two-review__header">
-            <span>CYCLE 04 · LOCAL REVIEW · 2026-07-29</span>
+            <span>CYCLE 04 · CLOSED · 2026-07-29</span>
             <h2 id="cycle-four-title">
               Python 의존성 해석 결과까지 고정해 같은 커밋을 다시 만들 수 있게 했다.
             </h2>
@@ -741,11 +741,19 @@ export default function BuildLogPage() {
           <p className="cycle-two-review__note">
             위 수치는 2026-07-29 로컬의 격리된 새 환경에서 확인한 결과다.
             Python 3.12.13과 3.13.12에서 OpenAPI 검증이 각각 통과했고, 각
-            환경의 결정론적 API 테스트는 15 passed / 3 deselected였다. 저장소는
-            공개 상태지만 원격 CI는 아직 PENDING이며 실행 URL도 확정 전이다.
-            로컬 Docker daemon이 실행 중이 아니므로 컨테이너 검증은 공개
-            CI의 container 작업에서 확인한다. 배포는 여건이 확정될 때까지
-            계속 보류하며 이 결과를 운영 성능으로 표현하지 않는다.
+            환경의 결정론적 API 테스트는 15 passed / 3 deselected였다. 공개
+            GitHub Actions{" "}
+            <a
+              href="https://github.com/lulupang2/QuakeCurrent/actions/runs/30418181319"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Verify #30418181319
+            </a>
+            에서 commit da111c3의 Python 3.12·3.13 계약 작업, 잠금 기반 API
+            컨테이너 빌드와 비루트 실행, 기존 웹·브라우저 검증이 모두 통과했다.
+            배포는 여건이 확정될 때까지 계속 보류하며 이 결과를 운영 성능으로
+            표현하지 않는다.
           </p>
         </section>
       </section>
