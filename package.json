@@ -21,6 +21,9 @@
     "test:ssr": "node --test tests/web/rendered-html.test.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern apps/api/.venv",
+    "generate:api-contract": "npm run contract:generate -w @quakecurrent/api-client",
+    "check:api-contract": "npm run contract:check -w @quakecurrent/api-client",
+    "check:api-client-contract": "npm run contract:check-types -w @quakecurrent/api-client",
     "api:up": "docker compose up --build",
     "api:down": "docker compose down"
   },

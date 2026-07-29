@@ -478,6 +478,22 @@
   text-underline-offset: 3px;
 }
 
+.cycle-three-contract {
+  background: linear-gradient(
+    180deg,
+    rgba(184, 121, 33, 0.045),
+    transparent 320px
+  );
+}
+
+.cycle-three-contract .cycle-two-review__header > span,
+.cycle-three-contract .cycle-two-flow article > span,
+.cycle-three-contract .cycle-two-checks span,
+.cycle-three-contract .cycle-two-findings__label,
+.cycle-three-contract .cycle-two-findings article > span {
+  color: var(--amber);
+}
+
 .build-log-footer {
   display: flex;
   align-items: center;

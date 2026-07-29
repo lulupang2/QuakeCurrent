@@ -19,7 +19,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Build Log",
   description:
-    "QuakeCurrent Cycle 01–02의 Prototype → Plan → Autopilot → Review 구현 기록.",
+    "QuakeCurrent Cycle 01–03의 Prototype → Plan → Autopilot → Review 구현 기록.",
 };
 
 const stages = [
@@ -266,6 +266,95 @@ const cycleTwoFindings = [
   },
 ];
 
+const cycleThreeStages = [
+  {
+    name: "PROTOTYPE",
+    body: "수기 bootstrap 타입을 실제 FastAPI OpenAPI 문서로 재생성해 누락돼 있던 304·404·422 응답과 검증 오류 타입을 드러냈다.",
+  },
+  {
+    name: "PLAN",
+    body: "FastAPI를 원본, 정렬된 openapi.json을 언어 경계, TypeScript를 파생 산출물로 정했다. WebSocket 프레임은 별도 계약으로 유지한다.",
+  },
+  {
+    name: "AUTOPILOT",
+    body: "한 명령으로 스냅샷과 타입을 갱신하고, API CI는 서버→스냅샷을, 웹 CI는 스냅샷→타입을 독립적으로 검사한다.",
+  },
+  {
+    name: "REVIEW",
+    body: "필드를 메모리에서 변경해 TypeScript 반영을 검증하고, 줄 끝 차이는 무시하되 실제 내용 차이만 파일명과 함께 실패하도록 확인했다.",
+  },
+];
+
+const cycleThreeChecks = [
+  {
+    label: "REST PATHS",
+    value: "5 / 5",
+    note: "health · readiness · events",
+  },
+  {
+    label: "SCHEMAS",
+    value: "11",
+    note: "domain · validation · error",
+  },
+  {
+    label: "OPERATION IDs",
+    value: "5 / 5",
+    note: "explicit · unique · stable",
+  },
+  {
+    label: "GENERATED TS",
+    value: "446 LOC",
+    note: "openapi-typescript 7.13.0",
+  },
+  {
+    label: "API LOCAL",
+    value: "15 / 15",
+    note: "deterministic contract suite",
+  },
+  {
+    label: "CLIENT",
+    value: "12 / 12",
+    note: "REST · WS · generator",
+  },
+  {
+    label: "DRIFT GATES",
+    value: "2 / 2",
+    note: "API snapshot · generated types",
+  },
+  {
+    label: "CI",
+    value: "PENDING",
+    note: "Cycle 03 remote run pending",
+  },
+];
+
+const cycleThreeFindings = [
+  {
+    number: "C3-R01",
+    title: "생성 파일이라고 적힌 타입이 실제로는 148줄짜리 수기 축약본이었다.",
+    resolution:
+      "실제 FastAPI 문서에서 446줄 타입을 생성해 검증 오류와 모든 응답 계약을 포함했다.",
+  },
+  {
+    number: "C3-R02",
+    title: "기본 operationId가 Python 함수명과 경로에 결합돼 있었다.",
+    resolution:
+      "공개 REST 동작 다섯 개에 명시적·유일한 operationId를 부여하고 계약 테스트로 고정했다.",
+  },
+  {
+    number: "C3-R03",
+    title: "하나의 CI 작업에서 두 언어를 검사하면 Python과 Node 설치가 중복된다.",
+    resolution:
+      "API 작업은 스냅샷, 웹 작업은 TypeScript 생성물만 검사하도록 경계를 나눴다.",
+  },
+  {
+    number: "C3-R04",
+    title: "실제 304와 404 응답이 OpenAPI 문서에 선언되지 않았다.",
+    resolution:
+      "조건부 스냅샷의 304와 사건 상세의 404 오류 모델을 응답 계약에 추가했다.",
+  },
+];
+
 export default function BuildLogPage() {
   return (
     <main className="build-log-page">
@@ -276,7 +365,7 @@ export default function BuildLogPage() {
         </Link>
         <div className="build-log-brand">
           <CircleDot size={19} />
-          QUAKECURRENT / CYCLES 01—02
+          QUAKECURRENT / CYCLES 01—03
         </div>
         <span>LOCAL REVIEW · 2026-07-29</span>
       </header>
@@ -293,7 +382,7 @@ export default function BuildLogPage() {
         </h1>
         <p>
           이 페이지는 결과물의 장식이 아니라 구현 기록입니다. 같은 지진 수직
-          슬라이스를 두 번 순환하며 무엇을 만들고, 자동화하고, 검토했는지
+          슬라이스를 세 번 순환하며 무엇을 만들고, 자동화하고, 검토했는지
           보여줍니다.
         </p>
       </section>
@@ -429,6 +518,69 @@ export default function BuildLogPage() {
             에서 commit dce4594의 API와 웹 작업이 모두 통과했다. 이는 원격 CI
             증거이며 배포 성능으로 표현하지 않는다. OpenAPI 재생성 drift
             gate와 production telemetry는 다음 사이클의 검토 항목이다.
+          </p>
+        </section>
+
+        <section
+          aria-labelledby="cycle-three-title"
+          className="cycle-two-review cycle-three-contract"
+        >
+          <header className="cycle-two-review__header">
+            <span>CYCLE 03 · LOCAL REVIEW · 2026-07-29</span>
+            <h2 id="cycle-three-title">
+              계약의 변경을 사람이 기억하는 대신 파이프라인이 증명한다.
+            </h2>
+            <p>
+              FastAPI가 유일한 REST 원본이다. 정렬된 OpenAPI 스냅샷이 Python과
+              TypeScript 사이의 명시적 경계가 되고, 생성물 한쪽만 바뀌면
+              커밋하기 전과 CI에서 모두 실패한다.
+            </p>
+          </header>
+
+          <div className="cycle-two-flow">
+            {cycleThreeStages.map((stage, index) => (
+              <article key={stage.name}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <div>
+                  <strong>{stage.name}</strong>
+                  <p>{stage.body}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="cycle-two-checks">
+            {cycleThreeChecks.map((check) => (
+              <div key={check.label}>
+                <span>{check.label}</span>
+                <strong>{check.value}</strong>
+                <small>{check.note}</small>
+              </div>
+            ))}
+          </div>
+
+          <div className="cycle-two-findings">
+            <div className="cycle-two-findings__label">
+              <Braces size={14} />
+              CYCLE 03 REVIEW에서 닫은 계약 결함
+            </div>
+            <div>
+              {cycleThreeFindings.map((finding) => (
+                <article key={finding.number}>
+                  <span>{finding.number}</span>
+                  <div>
+                    <h3>{finding.title}</h3>
+                    <p>{finding.resolution}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <p className="cycle-two-review__note">
+            위 수치는 2026-07-29 로컬 검증 결과다. Cycle 03 변경의 원격 CI는 아직
+            실행 전이므로 통과로 표시하지 않는다. Python 전이 의존성 lock과
+            production telemetry는 다음 반복의 검토 항목이다.
           </p>
         </section>
       </section>

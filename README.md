@@ -8,7 +8,8 @@ Cycle 01에서는 의도적으로 최근 24시간의 지진이라는 한 가지 
 호스팅 조건이 확정될 때까지 배포는 보류합니다. Cycle 02에서는 시간, 규모, 깊이
 필터를 클라이언트에 추가했습니다. 원본 24시간 스냅샷은 유지하면서 하나의 필터
 결과로 목록, 지도, 통계, 현재 선택을 파생하고, 선택한 필터 상태는 공유 가능한
-URL에 보존합니다.
+URL에 보존합니다. Cycle 03에서는 FastAPI OpenAPI 문서와 TypeScript 생성물 사이의
+drift를 로컬과 CI에서 자동으로 차단합니다.
 
 ## 포트폴리오에서 보여주는 역량
 
@@ -94,6 +95,7 @@ npm run typecheck
 npm run lint
 npm run build
 npm run test:ssr
+npm run check:api-contract
 ```
 
 `test:e2e`는 프로덕션 앱을 빌드한 뒤 URL 필터 보존, 새로고침 복원, 초기화,
@@ -103,6 +105,23 @@ GitHub Actions는 push와 pull request마다 API와 웹 작업을 분리해 실�
 [Verify #30410815313](https://github.com/lulupang2/QuakeCurrent/actions/runs/30410815313)에서
 commit `dce4594`의 두 작업이 모두 통과했습니다. 이는 CI 실행 증거이며 배포 또는
 프로덕션 성능을 의미하지 않습니다.
+
+## OpenAPI 계약 갱신
+
+REST 계약의 흐름은 `FastAPI → openapi.json → TypeScript`입니다. 서버를 실행하지
+않고 현재 FastAPI 앱에서 결정론적인 JSON 스냅샷을 만들며, `openapi-typescript
+7.13.0`으로 런타임 의존성이 없는 타입을 생성합니다.
+
+```bash
+npm run generate:api-contract
+npm run check:api-contract
+```
+
+`packages/api-client/openapi.json`과
+`packages/api-client/src/openapi.generated.ts`는 함께 커밋해야 합니다. CI의 API
+작업은 FastAPI와 JSON 스냅샷을 비교하고, 웹 작업은 JSON 스냅샷과 TypeScript
+생성물을 비교합니다. WebSocket 프레임은 OpenAPI가 표현하지 못하므로
+`packages/api-client/src/ws-schema.ts`에서 별도로 관리합니다.
 
 백엔드 실행과 테스트 방법은 `apps/api/README.md`에 정리했습니다. 각 사이클의
 구현·검토 증거는 `/build-log`에서 확인할 수 있습니다.

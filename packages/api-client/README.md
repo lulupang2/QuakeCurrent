@@ -6,6 +6,7 @@ QuakeCurrent의 FastAPI 백엔드와 웹 앱 사이의 계약을 고정하는 Ty
 ## 구성
 
 - `src/openapi.generated.ts`: FastAPI의 `/openapi.json`에서 생성한 REST API 타입
+- `openapi.json`: FastAPI 앱에서 결정론적으로 내보낸 REST 계약 스냅샷
 - `src/client.ts`: 생성 타입을 사용하는 경량 `fetch` 클라이언트
 - `src/ws-schema.ts`: OpenAPI가 표현하지 못하는 WebSocket 프레임 계약
 - `src/ws.ts`: 재연결, 지수 백오프, `seq` 누락 복구를 처리하는 실시간 이벤트 클라이언트
@@ -14,12 +15,17 @@ REST 응답 모델이나 경로가 바뀌면 FastAPI를 실행한 상태에서 O
 TypeScript 빌드와 테스트를 통과시켜야 합니다. WebSocket 프레임은 OpenAPI에 포함되지 않으므로
 `ws-schema.ts`를 서버의 Pydantic 모델과 함께 변경해야 합니다.
 
-OpenAPI 타입 생성 예시는 다음과 같습니다.
+저장소 루트에서 다음 명령으로 OpenAPI 스냅샷과 타입을 함께 갱신합니다. API
+서버를 별도로 실행할 필요가 없습니다.
 
 ```bash
-npx openapi-typescript http://localhost:8000/openapi.json \
-  --output packages/api-client/src/openapi.generated.ts
+npm run generate:api-contract
+npm run check:api-contract
 ```
+
+`openapi.generated.ts`는 직접 수정하지 않습니다. CI는 API 작업에서
+`FastAPI → openapi.json`, 웹 작업에서 `openapi.json → TypeScript`를 각각
+비교하므로 어느 한쪽만 갱신해도 실패합니다.
 
 ## 스냅샷과 실시간 이벤트 연결
 

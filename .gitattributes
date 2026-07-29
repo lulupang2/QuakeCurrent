@@ -1,0 +1,3 @@
+# OpenAPI 계약 생성물의 줄 끝을 운영체제와 무관하게 고정합니다.
+/packages/api-client/openapi.json text eol=lf
+/packages/api-client/src/openapi.generated.ts text eol=lf

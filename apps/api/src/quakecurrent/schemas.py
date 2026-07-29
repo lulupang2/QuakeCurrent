@@ -68,3 +68,7 @@ class ChangeListResponse(BaseModel):
 class HealthResponse(BaseModel):
     status: Literal["ok", "not_ready"]
     service: str
+
+
+class ApiErrorResponse(BaseModel):
+    detail: str

@@ -19,6 +19,7 @@ from quakecurrent.repository import (
     list_events,
 )
 from quakecurrent.schemas import (
+    ApiErrorResponse,
     ChangeListMeta,
     ChangeListResponse,
     EarthquakeDetail,
@@ -43,7 +44,12 @@ def _etag_for_snapshot(
     return f'W/"{digest}"'
 
 
-@router.get("/events", response_model=EventListResponse)
+@router.get(
+    "/events",
+    response_model=EventListResponse,
+    operation_id="list_events",
+    responses={304: {"description": "Snapshot not modified"}},
+)
 async def events_snapshot(
     request: Request,
     response: Response,
@@ -86,7 +92,11 @@ async def events_snapshot(
     )
 
 
-@router.get("/events/changes", response_model=ChangeListResponse)
+@router.get(
+    "/events/changes",
+    response_model=ChangeListResponse,
+    operation_id="list_event_changes",
+)
 async def event_changes(
     after_seq: int = Query(default=0, ge=0),
     limit: int = Query(default=200, ge=1, le=500),
@@ -108,7 +118,12 @@ async def event_changes(
     )
 
 
-@router.get("/events/{event_id}", response_model=EarthquakeDetail)
+@router.get(
+    "/events/{event_id}",
+    response_model=EarthquakeDetail,
+    operation_id="get_event",
+    responses={404: {"model": ApiErrorResponse}},
+)
 async def event_detail(
     event_id: uuid.UUID,
     session: AsyncSession = Depends(get_session),

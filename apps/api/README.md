@@ -15,6 +15,24 @@ docker compose up --build
 API 주소는 `http://localhost:8000`입니다. 상태 확인 엔드포인트는 `/healthz`와
 `/readyz`이며, OpenAPI 문서는 `/openapi.json`에서 제공합니다.
 
+## OpenAPI 스냅샷
+
+서버를 실행하지 않고 현재 FastAPI 앱에서 정렬된 OpenAPI JSON을 내보낼 수
+있습니다. 저장소 루트의 통합 명령은 JSON과 TypeScript 타입을 함께 갱신합니다.
+
+```powershell
+npm run generate:api-contract
+npm run check:api-contract
+```
+
+CI의 API 작업은 다음 검사로
+`packages/api-client/openapi.json`이 서버 계약과 같은지 확인합니다.
+
+```bash
+python -m quakecurrent.openapi_export \
+  --check packages/api-client/openapi.json
+```
+
 ## 테스트
 
 개발 의존성과 함께 프로젝트를 설치합니다.

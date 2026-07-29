@@ -9,6 +9,12 @@ from quakecurrent.tasks import ingest_usgs_all_day
 def test_openapi_exposes_cycle_one_contract() -> None:
     document = app.openapi()
     paths = document["paths"]
+    operation_ids = {
+        operation["operationId"]
+        for path in paths.values()
+        for method, operation in path.items()
+        if method in {"get", "post", "put", "patch", "delete"}
+    }
 
     assert document["info"]["title"] == "QuakeCurrent API"
     assert "/v1/events" in paths
@@ -16,6 +22,15 @@ def test_openapi_exposes_cycle_one_contract() -> None:
     assert "/v1/events/{event_id}" in paths
     assert "/healthz" in paths
     assert "/readyz" in paths
+    assert operation_ids == {
+        "get_event",
+        "healthz",
+        "list_event_changes",
+        "list_events",
+        "readyz",
+    }
+    assert "304" in paths["/v1/events"]["get"]["responses"]
+    assert "404" in paths["/v1/events/{event_id}"]["get"]["responses"]
     assert any(
         getattr(route, "path", None) == "/v1/ws/events"
         for route in websocket_router.routes

@@ -54,7 +54,12 @@ app.include_router(event_router)
 app.include_router(websocket_router)
 
 
-@app.get("/healthz", response_model=HealthResponse, tags=["operations"])
+@app.get(
+    "/healthz",
+    response_model=HealthResponse,
+    tags=["operations"],
+    operation_id="healthz",
+)
 async def health() -> HealthResponse:
     return HealthResponse(status="ok", service="quakecurrent-api")
 
@@ -64,6 +69,7 @@ async def health() -> HealthResponse:
     response_model=HealthResponse,
     responses={503: {"model": HealthResponse}},
     tags=["operations"],
+    operation_id="readyz",
 )
 async def readiness() -> HealthResponse | JSONResponse:
     try:
