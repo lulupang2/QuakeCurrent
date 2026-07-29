@@ -471,7 +471,7 @@ export default function QuakeCurrentDashboard({
             <Link href="/" className="brand-name">
               QUAKECURRENT
             </Link>
-            <p>SEISMIC SIGNAL / CYCLE 02</p>
+            <p>SEISMIC SIGNAL / FULL-STACK PROTOTYPE</p>
           </div>
         </div>
 
@@ -482,8 +482,12 @@ export default function QuakeCurrentDashboard({
           <Link href="/build-log">04 REVIEW</Link>
         </nav>
 
-        <Link className="build-log-link" href="/build-log">
-          BUILD LOG
+        <Link
+          aria-label="프로젝트 소개 보기"
+          className="build-log-link"
+          href="/project"
+        >
+          PROJECT
           <ArrowUpRight size={14} />
         </Link>
       </header>

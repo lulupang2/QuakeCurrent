@@ -494,6 +494,22 @@
   color: var(--amber);
 }
 
+.cycle-five-brief {
+  background: linear-gradient(
+    180deg,
+    rgba(47, 141, 104, 0.05),
+    transparent 360px
+  );
+}
+
+.cycle-five-brief .cycle-two-review__header > span,
+.cycle-five-brief .cycle-two-flow article > span,
+.cycle-five-brief .cycle-two-checks span,
+.cycle-five-brief .cycle-two-findings__label,
+.cycle-five-brief .cycle-two-findings article > span {
+  color: var(--live);
+}
+
 .build-log-footer {
   display: flex;
   align-items: center;

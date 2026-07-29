@@ -19,7 +19,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Build Log",
   description:
-    "QuakeCurrent Cycle 01–04의 Prototype → Plan → Autopilot → Review 구현 기록.",
+    "QuakeCurrent Cycle 01–05의 Prototype → Plan → Autopilot → Review 구현 기록.",
 };
 
 const stages = [
@@ -444,19 +444,108 @@ const cycleFourFindings = [
   },
 ];
 
+const cycleFiveStages = [
+  {
+    name: "PROTOTYPE",
+    body: "지도 프로토타입은 구현 결과를 바로 보여주지만 문제·구현 범위·기술 판단을 빠르게 파악하기 어려웠고, 긴 Build Log는 첫 진입점으로 쓰기에는 정보량이 많았다.",
+  },
+  {
+    name: "PLAN",
+    body: "Server Component 기반 /project를 채용용 허브로 두고 지도 프로토타입, 상세 Build Log, 공개 코드와 CI를 각각 한 단계 안에서 열도록 정보 경계를 나눴다.",
+  },
+  {
+    name: "AUTOPILOT",
+    body: "소개 페이지를 client state와 WebGL이 없는 Server Component로 만들고 SSR 계약, 메타데이터, 실제 저장소·CI 링크를 자동 검증 경계에 포함했다.",
+  },
+  {
+    name: "REVIEW",
+    body: "운영 성과로 오해할 수 있는 표현을 제거하고 구현 범위·보류 항목을 함께 적었다. 키보드 skip link, 의미 있는 landmark, 모바일 단일 열과 새 공유 카드를 확인했다.",
+  },
+];
+
+const cycleFiveChecks = [
+  {
+    label: "PROJECT BRIEF",
+    value: "PASS",
+    note: "client state 없는 서버 렌더링",
+  },
+  {
+    label: "IMPLEMENTED SCOPE",
+    value: "4 AREAS",
+    note: "제품 · UI · API/데이터 · 품질/CI",
+  },
+  {
+    label: "DECISIONS",
+    value: "4",
+    note: "판단 기준과 승격 조건",
+  },
+  {
+    label: "EVIDENCE",
+    value: "6",
+    note: "로컬 검증 · 원격 CI 대기",
+  },
+  {
+    label: "SSR",
+    value: "4 / 4",
+    note: "dashboard · URL · log · brief",
+  },
+  {
+    label: "SOCIAL CARD",
+    value: "1731 × 909",
+    note: "프로젝트 카피 · 전용 OG",
+  },
+  {
+    label: "CLIENT STATE",
+    value: "0",
+    note: "소개 경로의 로컬 상태",
+  },
+  {
+    label: "CI",
+    value: "PENDING",
+    note: "공개 저장소 push 후 확인",
+  },
+];
+
+const cycleFiveFindings = [
+  {
+    number: "C5-R01",
+    title: "제품과 상세 로그 사이에 빠르게 맥락을 읽는 진입점이 없었다.",
+    resolution:
+      "문제·구현 범위·결정·증거·경계를 한 화면 흐름으로 압축한 /project를 추가했다.",
+  },
+  {
+    number: "C5-R02",
+    title: "소개를 지도 안에 합치면 100dvh WebGL 레이아웃과 모바일 시트가 충돌한다.",
+    resolution:
+      "지도 client island는 그대로 두고 소개를 client state 없는 Server Component 라우트로 분리했다.",
+  },
+  {
+    number: "C5-R03",
+    title: "헤더의 CYCLE 02와 이전 공유 카드가 현재 반복 상태를 잘못 설명했다.",
+    resolution:
+      "사이클 번호와 무관한 FULL-STACK PROTOTYPE으로 바꾸고 현재 프로젝트 카피의 OG 카드를 연결했다.",
+  },
+  {
+    number: "C5-R04",
+    title: "과거 측정값이 현재 운영 KPI처럼 읽힐 수 있었다.",
+    resolution:
+      "재실행 가능한 테스트·계약·CI 수치를 우선하고, 과거 45KB 측정은 Cycle 02의 의사결정 근거로만 한정했다.",
+  },
+];
+
 export default function BuildLogPage() {
   return (
     <main className="build-log-page">
       <header className="build-log-header">
         <Link href="/" className="back-link">
           <ArrowLeft size={15} />
-          LIVE MAP
+          MAP PROTOTYPE
         </Link>
         <div className="build-log-brand">
           <CircleDot size={19} />
-          QUAKECURRENT / CYCLES 01—04
+          QUAKECURRENT / CYCLES 01—05
         </div>
-        <span>LOCAL REVIEW · 2026-07-29</span>
+        <span>01—04 VERIFIED · 05 LOCAL</span>
       </header>
 
       <section className="build-log-hero">
@@ -471,7 +560,7 @@ export default function BuildLogPage() {
         </h1>
         <p>
           이 페이지는 결과물의 장식이 아니라 구현 기록입니다. 같은 지진 수직
-          슬라이스를 네 번 순환하며 무엇을 만들고, 자동화하고, 검토했는지
+          슬라이스를 다섯 번 순환하며 무엇을 만들고, 자동화하고, 검토했는지
           보여줍니다.
         </p>
       </section>
@@ -685,6 +774,7 @@ export default function BuildLogPage() {
         <section
           aria-labelledby="cycle-four-title"
           className="cycle-two-review"
+          id="cycle-04"
         >
           <header className="cycle-two-review__header">
             <span>CYCLE 04 · CLOSED · 2026-07-29</span>
@@ -756,12 +846,78 @@ export default function BuildLogPage() {
             표현하지 않는다.
           </p>
         </section>
+
+        <section
+          aria-labelledby="cycle-five-title"
+          className="cycle-two-review cycle-five-brief"
+          id="cycle-05"
+        >
+          <header className="cycle-two-review__header">
+            <span>CYCLE 05 · LOCAL REVIEW · 2026-07-29</span>
+            <h2 id="cycle-five-title">
+              깊이를 줄이지 않고도 빠르게 파악하도록 프로젝트 진입점을 설계했다.
+            </h2>
+            <p>
+              지도 프로토타입은 제품의 증거로, Build Log는 과정의 증거로 유지한다.
+              /project는 두 화면 사이에서 문제·구현 범위·기술 판단·검증 결과를
+              압축하고 공개 코드와 CI까지 연결하는 채용용 브리프다.
+            </p>
+          </header>
+
+          <div className="cycle-two-flow">
+            {cycleFiveStages.map((stage, index) => (
+              <article key={stage.name}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <div>
+                  <strong>{stage.name}</strong>
+                  <p>{stage.body}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="cycle-two-checks">
+            {cycleFiveChecks.map((check) => (
+              <div key={check.label}>
+                <span>{check.label}</span>
+                <strong>{check.value}</strong>
+                <small>{check.note}</small>
+              </div>
+            ))}
+          </div>
+
+          <div className="cycle-two-findings">
+            <div className="cycle-two-findings__label">
+              <Globe2 size={14} />
+              CYCLE 05 REVIEW에서 닫은 전달력 결함
+            </div>
+            <div>
+              {cycleFiveFindings.map((finding) => (
+                <article key={finding.number}>
+                  <span>{finding.number}</span>
+                  <div>
+                    <h3>{finding.title}</h3>
+                    <p>{finding.resolution}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <p className="cycle-two-review__note">
+            위 내용은 2026-07-29 로컬 코드·문서 검토 기준이다. /project는
+            client state 없는 Server Component로 서버 렌더링되며, 빌드
+            manifest에서 project page의 route JS 배열이 비어 있음을 확인했다.
+            타입·lint·프로덕션 빌드와 SSR 4/4가 통과했다. 원격 CI는 아직
+            PENDING이며 배포와 production telemetry는 계속 범위에서 제외한다.
+          </p>
+        </section>
       </section>
 
       <footer className="build-log-footer">
-        <span>QUAKECURRENT · LIVE EARTHQUAKE MONITOR</span>
-        <Link href="/">
-          프로토타입 열기
+        <span>QUAKECURRENT · EARTHQUAKE DATA PROTOTYPE</span>
+        <Link href="/project">
+          프로젝트 소개
           <ArrowLeft size={14} />
         </Link>
       </footer>

@@ -4,7 +4,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
 
 const DESCRIPTION =
-  "USGS 지진 피드를 수집·정규화하고 실시간으로 전달하는 지구 관측 프로토타입.";
+  "USGS 지진 피드를 수집·정규화하고 재연결 가능한 REST·WebSocket 경계로 전달하는 풀스택 지구 관측 프로토타입.";
 
 export async function generateMetadata(): Promise<Metadata> {
   const requestHeaders = await headers();
@@ -32,12 +32,12 @@ export async function generateMetadata(): Promise<Metadata> {
     // malformed host header.
   }
 
-  const socialImage = `${origin}/og-cycle-02.png`;
+  const socialImage = `${origin}/og.png`;
 
   return {
     metadataBase: new URL(origin),
     title: {
-      default: "QuakeCurrent — Live Earthquake Monitor",
+      default: "QuakeCurrent — Earthquake Data Prototype",
       template: "%s · QuakeCurrent",
     },
     description: DESCRIPTION,
@@ -48,7 +48,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: "website",
       url: origin,
-      title: "QuakeCurrent — Live Earthquake Monitor",
+      title: "QuakeCurrent — Full-stack Earthquake Data Prototype",
       description: DESCRIPTION,
       siteName: "QuakeCurrent",
       locale: "ko_KR",
@@ -57,13 +57,13 @@ export async function generateMetadata(): Promise<Metadata> {
           url: socialImage,
           width: 1731,
           height: 909,
-          alt: "QuakeCurrent Prototype, Plan, Autopilot, Review workflow",
+          alt: "지진 피드를 끊겨도 복구되는 데이터 프로토타입으로 만든 QuakeCurrent",
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: "QuakeCurrent — Live Earthquake Monitor",
+      title: "QuakeCurrent — Full-stack Earthquake Data Prototype",
       description: DESCRIPTION,
       images: [socialImage],
     },
