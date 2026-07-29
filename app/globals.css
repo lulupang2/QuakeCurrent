@@ -1,0 +1,100 @@
+@import "tailwindcss";
+@import "../features/earthquakes/styles/dashboard.css";
+@import "./build-log/build-log.css";
+
+@font-face {
+  font-family: "LINE Seed Sans KR";
+  src: url("/fonts/line-seed-sans-kr/LINESeedKR-Rg.woff2") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "LINE Seed Sans KR";
+  src: url("/fonts/line-seed-sans-kr/LINESeedKR-Bd.woff2") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 700;
+}
+
+:root {
+  --font-sans:
+    "LINE Seed Sans KR", "Noto Sans KR", "Apple SD Gothic Neo", "Segoe UI",
+    sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --paper: #f1efe7;
+  --paper-bright: #faf9f4;
+  --paper-deep: #e4e1d6;
+  --ink: #142027;
+  --ink-soft: #526068;
+  --line: rgba(20, 32, 39, 0.16);
+  --line-strong: rgba(20, 32, 39, 0.31);
+  --signal: #f24f3f;
+  --signal-soft: #ff896e;
+  --live: #2f8d68;
+  --amber: #b87921;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+}
+
+:where(a, button):focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+
+a {
+  text-decoration: none;
+}
+
+::selection {
+  background: rgba(242, 79, 63, 0.22);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
