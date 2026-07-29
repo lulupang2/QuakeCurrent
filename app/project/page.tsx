@@ -19,8 +19,8 @@ import Link from "next/link";
 import styles from "./project.module.css";
 
 const GITHUB_REPOSITORY = "https://github.com/lulupang2/QuakeCurrent";
-const VERIFY_WORKFLOW =
-  "https://github.com/lulupang2/QuakeCurrent/actions/workflows/verify.yml";
+const VERIFY_RUN =
+  "https://github.com/lulupang2/QuakeCurrent/actions/runs/30420200735";
 
 export const metadata: Metadata = {
   title: "Project Brief",
@@ -118,8 +118,8 @@ const evidence = [
   },
   {
     label: "CI",
-    value: "PENDING",
-    note: "현재 변경 push 후 확인",
+    value: "PASS",
+    note: "Python 3.12·3.13 · container · web",
   },
 ];
 
@@ -221,7 +221,7 @@ export default function ProjectPage() {
           <aside className={styles.heroSummary} aria-label="프로젝트 요약">
             <div className={styles.summaryStatus}>
               <span />
-              LOCAL VERIFIED · PUBLIC CI PENDING
+              LOCAL VERIFIED · PUBLIC CI PASS
             </div>
             <dl>
               <div>
@@ -238,7 +238,7 @@ export default function ProjectPage() {
               </div>
               <div>
                 <dt>STATUS</dt>
-                <dd>로컬 검증 완료 / 원격 CI 대기 / 배포 보류</dd>
+                <dd>로컬·공개 CI 검증 완료 / 배포 보류</dd>
               </div>
             </dl>
             <a
@@ -313,7 +313,7 @@ export default function ProjectPage() {
           </div>
 
           <div className={styles.evidenceLinks}>
-            <a href={VERIFY_WORKFLOW} rel="noreferrer" target="_blank">
+            <a href={VERIFY_RUN} rel="noreferrer" target="_blank">
               <GitBranch aria-hidden="true" size={15} />
               GitHub Actions 확인
               <ArrowUpRight aria-hidden="true" size={14} />
@@ -325,9 +325,8 @@ export default function ProjectPage() {
           </div>
 
           <p className={styles.disclaimer}>
-            위 수치는 로컬 검증 결과이며 공개 CI는 현재 변경을 push한 뒤 다시
-            확인합니다. 실제 사용자 트래픽, 프로덕션 가용성이나 운영 성능을
-            의미하지 않습니다.
+            위 수치는 로컬 및 공개 CI 검증 결과입니다. 실제 사용자 트래픽,
+            프로덕션 가용성이나 운영 성능을 의미하지 않습니다.
           </p>
         </section>
 

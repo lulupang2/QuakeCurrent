@@ -81,9 +81,10 @@ test("server-renders the workflow build log", async () => {
   assert.match(html, /CYCLE 04 · CLOSED/);
   assert.match(html, /Python 3\.12·3\.13/);
   assert.match(html, /Verify #30418181319/);
-  assert.match(html, /CYCLE 05 · LOCAL REVIEW/);
+  assert.match(html, /CYCLE 05 · CLOSED/);
   assert.match(html, /C5-R04/);
   assert.match(html, /1731 × 909/);
+  assert.match(html, /Verify #30420200735/);
 });
 
 test("server-renders the recruiter project brief", async () => {
@@ -100,8 +101,12 @@ test("server-renders the recruiter project brief", async () => {
   assert.match(html, /href="\/build-log"/);
   assert.match(html, /https:\/\/github\.com\/lulupang2\/QuakeCurrent/);
   assert.match(html, /배포 보류/);
-  assert.match(html, /LOCAL VERIFIED · PUBLIC CI PENDING/);
-  assert.doesNotMatch(html, /PUBLIC CI PASS/);
+  assert.match(html, /LOCAL VERIFIED · PUBLIC CI PASS/);
+  assert.doesNotMatch(html, /PUBLIC CI PENDING/);
+  assert.match(
+    html,
+    /https:\/\/github\.com\/lulupang2\/QuakeCurrent\/actions\/runs\/30420200735/,
+  );
   assert.doesNotMatch(html, /QuakeCurrentDashboard|EarthquakeGlobe/);
 
   const evidencePosition = html.indexOf("02 · REVIEW EVIDENCE");

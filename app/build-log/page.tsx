@@ -482,7 +482,7 @@ const cycleFiveChecks = [
   {
     label: "EVIDENCE",
     value: "6",
-    note: "로컬 검증 · 원격 CI 대기",
+    note: "로컬·공개 CI 검증 결과",
   },
   {
     label: "SSR",
@@ -501,8 +501,8 @@ const cycleFiveChecks = [
   },
   {
     label: "CI",
-    value: "PENDING",
-    note: "공개 저장소 push 후 확인",
+    value: "PASS",
+    note: "Verify #30420200735",
   },
 ];
 
@@ -545,7 +545,7 @@ export default function BuildLogPage() {
           <CircleDot size={19} />
           QUAKECURRENT / CYCLES 01—05
         </div>
-        <span>01—04 VERIFIED · 05 LOCAL</span>
+        <span>01—05 VERIFIED</span>
       </header>
 
       <section className="build-log-hero">
@@ -853,7 +853,7 @@ export default function BuildLogPage() {
           id="cycle-05"
         >
           <header className="cycle-two-review__header">
-            <span>CYCLE 05 · LOCAL REVIEW · 2026-07-29</span>
+            <span>CYCLE 05 · CLOSED · 2026-07-29</span>
             <h2 id="cycle-five-title">
               깊이를 줄이지 않고도 빠르게 파악하도록 프로젝트 진입점을 설계했다.
             </h2>
@@ -908,8 +908,17 @@ export default function BuildLogPage() {
             위 내용은 2026-07-29 로컬 코드·문서 검토 기준이다. /project는
             client state 없는 Server Component로 서버 렌더링되며, 빌드
             manifest에서 project page의 route JS 배열이 비어 있음을 확인했다.
-            타입·lint·프로덕션 빌드와 SSR 4/4가 통과했다. 원격 CI는 아직
-            PENDING이며 배포와 production telemetry는 계속 범위에서 제외한다.
+            타입·lint·프로덕션 빌드와 SSR 4/4가 통과했다. 공개 CI{" "}
+            <a
+              href="https://github.com/lulupang2/QuakeCurrent/actions/runs/30420200735"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Verify #30420200735
+            </a>
+            에서 commit 75d7be2의 Python 3.12·3.13 계약 검사, 잠금 기반 API
+            컨테이너와 웹·브라우저 검증이 모두 통과했다. 배포와 production
+            telemetry는 계속 범위에서 제외한다.
           </p>
         </section>
       </section>
