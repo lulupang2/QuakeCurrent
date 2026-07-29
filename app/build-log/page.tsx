@@ -19,7 +19,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Build Log",
   description:
-    "QuakeCurrent Cycle 01–03의 Prototype → Plan → Autopilot → Review 구현 기록.",
+    "QuakeCurrent Cycle 01–04의 Prototype → Plan → Autopilot → Review 구현 기록.",
 };
 
 const stages = [
@@ -355,6 +355,95 @@ const cycleThreeFindings = [
   },
 ];
 
+const cycleFourStages = [
+  {
+    name: "PROTOTYPE",
+    body: "pyproject.toml의 범위 의존성은 호환 가능한 직접 의존성만 설명할 뿐, 설치 시점마다 달라질 수 있는 전이 의존성의 정확한 버전까지 고정하지 못했다.",
+  },
+  {
+    name: "PLAN",
+    body: "Python 3.12를 기준선으로 두고 3.12·3.13을 모두 지원한다. uv 0.12.0과 uv.lock을 저장소에 고정해 같은 커밋이 같은 의존성 그래프를 재현하도록 정했다.",
+  },
+  {
+    name: "AUTOPILOT",
+    body: "CI는 uv lock --check로 선언과 lock의 일치를 검사한 뒤 uv sync --locked --extra dev로 개발 환경을 만든다. Docker는 uv sync --locked --no-editable로 런타임 환경만 재현한다.",
+  },
+  {
+    name: "REVIEW",
+    body: "새 환경에서 Python 3.12.13과 3.13.12를 각각 설치해 OpenAPI 스냅샷과 결정론적 API 테스트를 검증했다. 원격 CI와 컨테이너 검증은 아직 실행 전이므로 통과로 기록하지 않았다.",
+  },
+];
+
+const cycleFourChecks = [
+  {
+    label: "LOCKFILE",
+    value: "PASS",
+    note: "uv.lock · 선언과 해석 결과 고정",
+  },
+  {
+    label: "UV",
+    value: "0.12.0",
+    note: "로컬 · CI · Docker 도구 버전",
+  },
+  {
+    label: "PYTHON 3.12",
+    value: "3.12.13",
+    note: "새 환경 · 지원 기준선",
+  },
+  {
+    label: "PYTHON 3.13",
+    value: "3.13.12",
+    note: "새 환경 · 상위 지원 버전",
+  },
+  {
+    label: "OPENAPI",
+    value: "2 / 2",
+    note: "3.12 PASS · 3.13 PASS",
+  },
+  {
+    label: "API TESTS",
+    value: "15 PASSED",
+    note: "Python 버전별 동일 결과",
+  },
+  {
+    label: "LIVE STACK",
+    value: "3 DESELECTED",
+    note: "외부 서비스 테스트 분리",
+  },
+  {
+    label: "CI",
+    value: "PENDING",
+    note: "공개 저장소 push 후 확인",
+  },
+];
+
+const cycleFourFindings = [
+  {
+    number: "C4-R01",
+    title: "범위 의존성만으로는 전이 패키지의 버전과 해시를 재현할 수 없었다.",
+    resolution:
+      "uv.lock을 커밋하고 uv lock --check를 자동 검증 경계로 추가했다.",
+  },
+  {
+    number: "C4-R02",
+    title: "로컬 기본 Python 3.13과 CI의 Python 3.12 사이에 검증 공백이 있었다.",
+    resolution:
+      "3.12를 프로젝트 기준선으로 명시하고 3.12.13·3.13.12의 새 환경에서 같은 계약과 테스트 결과를 확인했다.",
+  },
+  {
+    number: "C4-R03",
+    title: "일반 pip 설치는 실행할 때마다 의존성 해석 결과가 달라질 수 있었다.",
+    resolution:
+      "개발·CI는 --locked --extra dev, Docker 런타임은 --locked --no-editable 동기화로 역할을 분리했다.",
+  },
+  {
+    number: "C4-R04",
+    title: "로컬 Docker daemon이 실행 중이 아니어서 컨테이너 빌드를 검증할 수 없었다.",
+    resolution:
+      "로컬 통과로 과장하지 않고 PENDING으로 남겼다. 공개 저장소의 CI container 작업에서 동일한 lock 기반 빌드를 확인한다.",
+  },
+];
+
 export default function BuildLogPage() {
   return (
     <main className="build-log-page">
@@ -365,7 +454,7 @@ export default function BuildLogPage() {
         </Link>
         <div className="build-log-brand">
           <CircleDot size={19} />
-          QUAKECURRENT / CYCLES 01—03
+          QUAKECURRENT / CYCLES 01—04
         </div>
         <span>LOCAL REVIEW · 2026-07-29</span>
       </header>
@@ -382,7 +471,7 @@ export default function BuildLogPage() {
         </h1>
         <p>
           이 페이지는 결과물의 장식이 아니라 구현 기록입니다. 같은 지진 수직
-          슬라이스를 세 번 순환하며 무엇을 만들고, 자동화하고, 검토했는지
+          슬라이스를 네 번 순환하며 무엇을 만들고, 자동화하고, 검토했는지
           보여줍니다.
         </p>
       </section>
@@ -588,7 +677,75 @@ export default function BuildLogPage() {
             </a>
             에서 commit 31f9277의 API 스냅샷 gate, TypeScript 생성물 gate,
             기존 API·웹·브라우저 검증이 모두 통과했다. Python 전이 의존성
-            lock과 production telemetry는 다음 반복의 검토 항목이다.
+            lock은 Cycle 04로 이어졌고 production telemetry는 배포 결정 이후의
+            검토 항목이다.
+          </p>
+        </section>
+
+        <section
+          aria-labelledby="cycle-four-title"
+          className="cycle-two-review"
+        >
+          <header className="cycle-two-review__header">
+            <span>CYCLE 04 · LOCAL REVIEW · 2026-07-29</span>
+            <h2 id="cycle-four-title">
+              Python 의존성 해석 결과까지 고정해 같은 커밋을 다시 만들 수 있게 했다.
+            </h2>
+            <p>
+              pyproject.toml은 지원 범위를 설명하고 uv.lock은 선택된 전체
+              의존성 그래프를 기록한다. Python 3.12를 기준선으로 유지하면서
+              3.13까지 같은 OpenAPI 계약과 결정론적 테스트 결과를 검증한다.
+            </p>
+          </header>
+
+          <div className="cycle-two-flow">
+            {cycleFourStages.map((stage, index) => (
+              <article key={stage.name}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <div>
+                  <strong>{stage.name}</strong>
+                  <p>{stage.body}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="cycle-two-checks">
+            {cycleFourChecks.map((check) => (
+              <div key={check.label}>
+                <span>{check.label}</span>
+                <strong>{check.value}</strong>
+                <small>{check.note}</small>
+              </div>
+            ))}
+          </div>
+
+          <div className="cycle-two-findings">
+            <div className="cycle-two-findings__label">
+              <PackageCheck size={14} />
+              CYCLE 04 REVIEW에서 닫았거나 보류한 재현성 결함
+            </div>
+            <div>
+              {cycleFourFindings.map((finding) => (
+                <article key={finding.number}>
+                  <span>{finding.number}</span>
+                  <div>
+                    <h3>{finding.title}</h3>
+                    <p>{finding.resolution}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <p className="cycle-two-review__note">
+            위 수치는 2026-07-29 로컬의 격리된 새 환경에서 확인한 결과다.
+            Python 3.12.13과 3.13.12에서 OpenAPI 검증이 각각 통과했고, 각
+            환경의 결정론적 API 테스트는 15 passed / 3 deselected였다. 저장소는
+            공개 상태지만 원격 CI는 아직 PENDING이며 실행 URL도 확정 전이다.
+            로컬 Docker daemon이 실행 중이 아니므로 컨테이너 검증은 공개
+            CI의 container 작업에서 확인한다. 배포는 여건이 확정될 때까지
+            계속 보류하며 이 결과를 운영 성능으로 표현하지 않는다.
           </p>
         </section>
       </section>

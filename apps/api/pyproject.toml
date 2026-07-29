@@ -30,6 +30,9 @@ dev = [
 [tool.hatch.build.targets.wheel]
 packages = ["src/quakecurrent"]
 
+[tool.uv]
+required-version = "==0.12.0"
+
 [tool.pytest.ini_options]
 addopts = "-q"
 asyncio_mode = "auto"

@@ -9,7 +9,9 @@ Cycle 01에서는 의도적으로 최근 24시간의 지진이라는 한 가지 
 필터를 클라이언트에 추가했습니다. 원본 24시간 스냅샷은 유지하면서 하나의 필터
 결과로 목록, 지도, 통계, 현재 선택을 파생하고, 선택한 필터 상태는 공유 가능한
 URL에 보존합니다. Cycle 03에서는 FastAPI OpenAPI 문서와 TypeScript 생성물 사이의
-drift를 로컬과 CI에서 자동으로 차단합니다.
+drift를 로컬과 CI에서 자동으로 차단합니다. Cycle 04에서는 Python 3.12를 기본
+실행 버전으로 고정하고, `uv.lock`으로 모든 전이 의존성을 잠가 개발 환경·CI·API
+컨테이너가 같은 패키지 조합을 재현하도록 만들었습니다.
 
 ## 포트폴리오에서 보여주는 역량
 
@@ -60,6 +62,7 @@ scripts/                     로컬 프로덕션 실행 스크립트
 
 - Node.js 22.13 이상
 - Docker Desktop과 Compose
+- API를 컨테이너 밖에서 실행할 경우 Python 3.12와 uv 0.12.0
 
 백엔드 스택을 실행합니다.
 
@@ -96,6 +99,7 @@ npm run lint
 npm run build
 npm run test:ssr
 npm run check:api-contract
+uv lock --project apps/api --check
 ```
 
 `test:e2e`는 프로덕션 앱을 빌드한 뒤 URL 필터 보존, 새로고침 복원, 초기화,
@@ -105,6 +109,23 @@ GitHub Actions는 push와 pull request마다 API와 웹 작업을 분리해 실�
 [Verify #30410815313](https://github.com/lulupang2/QuakeCurrent/actions/runs/30410815313)에서
 commit `dce4594`의 두 작업이 모두 통과했습니다. 이는 CI 실행 증거이며 배포 또는
 프로덕션 성능을 의미하지 않습니다.
+
+## Python 의존성 재현
+
+API 프로젝트의 직접·전이 의존성은 `apps/api/uv.lock`에 버전과 파일 해시까지
+기록합니다. 다음 명령은 잠금 파일을 변경하지 않고 Python 3.12 개발 환경을 정확히
+동기화합니다.
+
+```bash
+uv sync --project apps/api --python 3.12 --locked --extra dev
+uv run --project apps/api --python 3.12 --locked --extra dev \
+  python -m pytest -m "not integration" apps/api/tests
+```
+
+`pyproject.toml`을 바꾼 뒤 잠금 파일을 갱신하지 않으면
+`uv lock --project apps/api --check`와 CI가 실패합니다. CI는 하나의 잠금 파일을
+Python 3.12와 3.13에서 각각 동기화해 OpenAPI 계약과 결정론적 테스트를 확인하고,
+별도 작업에서 같은 잠금 파일로 API 컨테이너를 빌드합니다.
 
 ## OpenAPI 계약 갱신
 
