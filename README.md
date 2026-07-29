@@ -1,96 +1,90 @@
 # QuakeCurrent
 
-QuakeCurrent is a hiring-portfolio vertical slice that turns the USGS
-`all_day.geojson` earthquake feed into a live, explorable globe. The project is
-organized around a repeatable `Prototype → Plan → Autopilot → Review` cycle.
+QuakeCurrent는 USGS의 `all_day.geojson` 지진 피드를 실시간으로 탐색할 수 있는
+지구본으로 표현한 취업용 포트폴리오 프로젝트입니다. 구현 과정은 반복 가능한
+`Prototype → Plan → Autopilot → Review` 사이클을 중심으로 구성했습니다.
 
-Cycle 01 deliberately contains one phenomenon only: earthquakes from the past
-24 hours. Deployment is deferred until the hosting constraints are known.
-Cycle 02 closes a client-side filter iteration for time, magnitude, and depth.
-It keeps the raw 24-hour snapshot intact, derives the list, map, metrics, and
-current selection from one filtered result, and preserves the selected state in
-a shareable URL.
+Cycle 01에서는 의도적으로 최근 24시간의 지진이라는 한 가지 현상만 다뤘습니다.
+호스팅 조건이 확정될 때까지 배포는 보류합니다. Cycle 02에서는 시간, 규모, 깊이
+필터를 클라이언트에 추가했습니다. 원본 24시간 스냅샷은 유지하면서 하나의 필터
+결과로 목록, 지도, 통계, 현재 선택을 파생하고, 선택한 필터 상태는 공유 가능한
+URL에 보존합니다.
 
-## Portfolio scope
+## 포트폴리오에서 보여주는 역량
 
-- Product and UX: vertical-slice scoping, Korean information design, responsive
-  map and filter interactions
-- Frontend: React state boundaries, SSR URL hydration, MapLibre/deck.gl, and
-  accessible desktop/mobile controls
-- Backend and data: FastAPI, OpenAPI, PostGIS, Celery, Redis, and WebSocket
-  catch-up
-- Quality: deterministic fixtures, contract tests, browser E2E, local live-stack
-  verification, and CI definitions
+- 제품·UX: 수직 슬라이스 범위 설정, 한국어 정보 설계, 반응형 지도와 필터 상호작용
+- 프론트엔드: React 상태 경계, SSR URL 초기화, MapLibre/deck.gl, 접근 가능한
+  데스크톱·모바일 컨트롤
+- 백엔드·데이터: FastAPI, OpenAPI, PostGIS, Celery, Redis, WebSocket 재연결
+- 품질: 결정론적 fixture, 계약 테스트, 브라우저 E2E, 로컬 통합 스택 검증, CI
 
-Cycle 02 deliberately keeps filtering in the browser because the measured
-24-hour snapshot is about 45KB. API query and pagination are reconsidered if
-the gzip payload exceeds 250KB or filter computation exceeds 50ms p95 on a
-mid-range mobile device. Filter toggles use `replaceState` so three quick
-choices do not create three browser-history entries; shared URLs, reloads, and
-external `popstate` navigation still restore the complete state.
+Cycle 02에서 측정한 24시간 스냅샷은 약 45KB이므로 필터는 브라우저에서 처리합니다.
+gzip payload가 250KB를 넘거나 중급 모바일에서 필터 계산 p95가 50ms를 넘으면 API
+쿼리와 페이지네이션 승격을 다시 검토합니다. 필터 토글은 `replaceState`를 사용해
+짧은 선택마다 브라우저 방문 기록이 쌓이지 않게 했습니다. 공유 URL, 새로고침,
+외부 `popstate` 이동에서는 전체 필터 상태가 복원됩니다.
 
-## Architecture
+## 아키텍처
 
 ```text
 USGS GeoJSON
-  → Celery Beat (60 s)
-  → Celery worker / idempotent normalization
-  → PostgreSQL + PostGIS / change sequence
-  → Redis compact signal
-  → FastAPI REST snapshot + WebSocket
-  → generated TypeScript client
+  → Celery Beat (60초)
+  → Celery worker / 멱등 정규화
+  → PostgreSQL + PostGIS / 변경 시퀀스
+  → Redis 경량 신호
+  → FastAPI REST 스냅샷 + WebSocket
+  → 생성된 TypeScript 클라이언트
   → Next.js / MapLibre / deck.gl
 ```
 
-## Repository structure
+## 저장소 구조
 
 ```text
-app/                         Next.js routes and root layout
-features/earthquakes/        Earthquake UI, hooks, model, styles, and tests
-apps/api/                    Independent FastAPI service and ingestion workers
-packages/api-client/         OpenAPI REST and typed WebSocket client
-platform/sites/              Vinext/Sites build adapter and Worker entry
-tests/web/                   Rendered HTML contract tests
-scripts/                     Local production runtime
+app/                         Next.js 라우트와 루트 레이아웃
+features/earthquakes/        지진 UI, 훅, 모델, 스타일, 테스트
+apps/api/                    독립 FastAPI 서비스와 수집 worker
+packages/api-client/         OpenAPI REST·WebSocket TypeScript 클라이언트
+platform/sites/              Vinext/Sites 빌드 어댑터와 Worker 진입점
+tests/web/                   서버 렌더링 HTML 계약 테스트
+scripts/                     로컬 프로덕션 실행 스크립트
 ```
 
-The web app intentionally remains at the repository root so the existing
-Vinext/Sites build contract stays stable. Product code is feature-oriented,
-while the Python service and generated client remain independently testable.
+기존 Vinext/Sites 빌드 계약을 안정적으로 유지하기 위해 웹 앱은 저장소 루트에
+둡니다. 제품 코드는 기능 중심으로 구성하고, Python 서비스와 생성 클라이언트는
+각각 독립적으로 테스트할 수 있습니다.
 
-## Local development
+## 로컬 개발
 
-Prerequisites:
+필요한 환경:
 
-- Node.js 22.13+
-- Docker Desktop with Compose
+- Node.js 22.13 이상
+- Docker Desktop과 Compose
 
-Start the backend stack:
+백엔드 스택을 실행합니다.
 
 ```bash
 docker compose up --build
 ```
 
-Start the web app in a second terminal:
+다른 터미널에서 웹 앱을 실행합니다.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`. The API is expected at
-`http://localhost:8000`; set `NEXT_PUBLIC_API_BASE_URL` to override it. When the
-API is unavailable, the UI clearly labels and displays a small built-in demo
-snapshot.
+`http://localhost:3000`에서 확인할 수 있습니다. 기본 API 주소는
+`http://localhost:8000`이며, `NEXT_PUBLIC_API_BASE_URL`로 변경할 수 있습니다.
+API를 사용할 수 없으면 UI가 내장 데모 스냅샷임을 명확하게 표시합니다.
 
-For a production-like local preview:
+프로덕션과 유사한 로컬 환경은 다음과 같이 실행합니다.
 
 ```bash
 npm run build
 npm run start
 ```
 
-## Verification
+## 검증
 
 ```bash
 npm test
@@ -102,12 +96,13 @@ npm run build
 npm run test:ssr
 ```
 
-`test:e2e` builds the production app and verifies URL filter persistence,
-reload restoration, reset behavior, invalid-value normalization, and desktop /
-mobile parity in Chromium. GitHub Actions is configured with separate API and
-web jobs for pushes and pull requests. The repository has not had its first
-remote push yet, so this is CI configuration evidence rather than a hosted
-green-run claim.
+`test:e2e`는 프로덕션 앱을 빌드한 뒤 URL 필터 보존, 새로고침 복원, 초기화,
+유효하지 않은 값의 정규화, Chromium 데스크톱·모바일 동작 일치를 확인합니다.
+GitHub Actions는 push와 pull request마다 API와 웹 작업을 분리해 실행합니다.
+첫 원격 실행인
+[Verify #30410815313](https://github.com/lulupang2/QuakeCurrent/actions/runs/30410815313)에서
+commit `dce4594`의 두 작업이 모두 통과했습니다. 이는 CI 실행 증거이며 배포 또는
+프로덕션 성능을 의미하지 않습니다.
 
-Backend commands and tests are documented in `apps/api/README.md`. Actual cycle
-evidence is presented at `/build-log`.
+백엔드 실행과 테스트 방법은 `apps/api/README.md`에 정리했습니다. 각 사이클의
+구현·검토 증거는 `/build-log`에서 확인할 수 있습니다.

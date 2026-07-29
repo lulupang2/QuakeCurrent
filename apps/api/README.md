@@ -1,23 +1,23 @@
 # QuakeCurrent API
 
-Independent FastAPI service for the QuakeCurrent earthquake vertical slice.
-It ingests the USGS all-day feed, stores normalized events in PostGIS, and
-publishes compact change signals through Redis and WebSocket.
+QuakeCurrent 지진 수직 슬라이스를 위한 독립 FastAPI 서비스입니다. USGS의 하루
+피드를 수집하고, 정규화한 사건을 PostGIS에 저장한 뒤 Redis와 WebSocket으로 경량
+변경 신호를 발행합니다.
 
-## Local stack
+## 로컬 스택
 
-From the repository root:
+저장소 루트에서 다음 명령을 실행합니다.
 
 ```bash
 docker compose up --build
 ```
 
-The API is available at `http://localhost:8000`. Health endpoints are
-`/healthz` and `/readyz`; OpenAPI is served at `/openapi.json`.
+API 주소는 `http://localhost:8000`입니다. 상태 확인 엔드포인트는 `/healthz`와
+`/readyz`이며, OpenAPI 문서는 `/openapi.json`에서 제공합니다.
 
-## Tests
+## 테스트
 
-Install the project with its development dependencies:
+개발 의존성과 함께 프로젝트를 설치합니다.
 
 ```powershell
 cd apps/api
@@ -26,7 +26,7 @@ py -3.12 -m venv .venv
 .\.venv\Scripts\python.exe -m pytest
 ```
 
-On macOS or Linux, use the platform-specific virtual-environment path:
+macOS 또는 Linux에서는 해당 운영체제의 가상환경 경로를 사용합니다.
 
 ```bash
 cd apps/api
@@ -35,8 +35,8 @@ python3.12 -m venv .venv
 ./.venv/bin/python -m pytest
 ```
 
-To include the live PostGIS, REST, and WebSocket tests while the Compose stack
-is running:
+Compose 스택이 실행 중일 때 PostGIS, REST, WebSocket 통합 테스트까지 포함하려면
+다음 환경 변수를 지정합니다.
 
 ```powershell
 cd apps/api
@@ -46,15 +46,15 @@ $env:QUAKECURRENT_TEST_WS_URL='ws://localhost:8000'
 .\.venv\Scripts\python.exe -m pytest
 ```
 
-## Package layout
+## 패키지 구조
 
 ```text
 src/quakecurrent/
-  api/             REST and WebSocket routes
-  ingest.py        conditional fetch and ingestion orchestration
-  repository.py    PostGIS queries and idempotent upsert
-  tasks.py         Celery task entry
-  usgs.py          USGS normalization adapter
-alembic/           database migrations
-tests/             unit, contract, and live-stack tests
+  api/             REST·WebSocket 라우트
+  ingest.py        조건부 요청과 수집 흐름 제어
+  repository.py    PostGIS 쿼리와 멱등 upsert
+  tasks.py         Celery 작업 진입점
+  usgs.py          USGS 정규화 어댑터
+alembic/           데이터베이스 마이그레이션
+tests/             단위·계약·통합 스택 테스트
 ```

@@ -68,7 +68,7 @@ test("server-renders the workflow build log", async () => {
   assert.match(html, /R-06/);
   assert.match(html, /CYCLE 02 · CLOSED/);
   assert.match(html, /10 \/ 10/);
-  assert.match(html, /remote run pending/);
+  assert.match(html, /Verify #30410815313/);
   assert.match(html, /C2-R06/);
   assert.match(html, /C2-R07/);
 });

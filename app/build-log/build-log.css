@@ -472,6 +472,12 @@
   line-height: 1.7;
 }
 
+.cycle-two-review__note a {
+  color: var(--ink);
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
 .build-log-footer {
   display: flex;
   align-items: center;

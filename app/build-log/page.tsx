@@ -216,8 +216,8 @@ const cycleTwoChecks = [
   },
   {
     label: "CI",
-    value: "CONFIGURED",
-    note: "API + web · remote run pending",
+    value: "PASS",
+    note: "API + web · run #30410815313",
   },
 ];
 
@@ -418,10 +418,17 @@ export default function BuildLogPage() {
           </div>
 
           <p className="cycle-two-review__note">
-            위 수치는 2026-07-29 로컬 실행 결과다. GitHub Actions는 API와 웹
-            작업으로 구성했지만 저장소의 첫 commit과 remote push 전이므로
-            원격 실행 결과나 배포 성능으로 표현하지 않는다. OpenAPI 재생성
-            drift gate와 production telemetry는 다음 사이클의 검토 항목이다.
+            위 수치는 2026-07-29 로컬 실행 결과다. GitHub Actions{" "}
+            <a
+              href="https://github.com/lulupang2/QuakeCurrent/actions/runs/30410815313"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Verify #30410815313
+            </a>
+            에서 commit dce4594의 API와 웹 작업이 모두 통과했다. 이는 원격 CI
+            증거이며 배포 성능으로 표현하지 않는다. OpenAPI 재생성 drift
+            gate와 production telemetry는 다음 사이클의 검토 항목이다.
           </p>
         </section>
       </section>
