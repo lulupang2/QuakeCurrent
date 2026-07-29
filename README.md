@@ -47,19 +47,24 @@ USGS GeoJSON
 ## 저장소 구조
 
 ```text
-app/                         Next.js 라우트와 루트 레이아웃
-app/project/                 채용용 프로젝트 브리프
-features/earthquakes/        지진 UI, 훅, 모델, 스타일, 테스트
-apps/api/                    독립 FastAPI 서비스와 수집 worker
-packages/api-client/         OpenAPI REST·WebSocket TypeScript 클라이언트
-platform/sites/              Vinext/Sites 빌드 어댑터와 Worker 진입점
-tests/web/                   서버 렌더링 HTML 계약 테스트
-scripts/                     로컬 프로덕션 실행 스크립트
+apps/
+  web/                       독립 npm workspace
+    app/                     Next.js 라우트, 프로젝트 브리프와 루트 레이아웃
+    features/earthquakes/    지진 UI, 훅, 모델, 스타일, 테스트
+    platform/sites/          Vinext/Sites 빌드 어댑터와 Worker 진입점
+    public/                  폰트, 파비콘과 Open Graph 이미지
+    tests/                   브라우저 E2E와 서버 렌더링 계약 테스트
+    scripts/                 로컬 프로덕션 실행 스크립트
+  api/                       독립 FastAPI 서비스와 수집 worker
+packages/
+  api-client/                OpenAPI REST·WebSocket TypeScript 클라이언트
+package.json                 workspace 명령 조율
 ```
 
-기존 Vinext/Sites 빌드 계약을 안정적으로 유지하기 위해 웹 앱은 저장소 루트에
-둡니다. 제품 코드는 기능 중심으로 구성하고, Python 서비스와 생성 클라이언트는
-각각 독립적으로 테스트할 수 있습니다.
+실행 가능한 애플리케이션은 `apps`, 공유 클라이언트는 `packages`에 둡니다. 웹 앱은
+자체 설정과 의존성을 소유하고 Vinext를 `apps/web`에서 실행합니다. 저장소 루트의
+명령은 각 workspace로 위임하므로 기존 개발·검증 명령은 그대로 사용할 수 있습니다.
+Python 서비스와 생성 클라이언트도 각각 독립적으로 테스트할 수 있습니다.
 
 ## 로컬 개발
 

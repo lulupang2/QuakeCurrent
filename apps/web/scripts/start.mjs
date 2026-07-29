@@ -3,12 +3,12 @@ import { stat } from "node:fs/promises";
 import { createServer } from "node:http";
 import path from "node:path";
 import { Readable } from "node:stream";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { createGzip } from "node:zlib";
 
-const root = process.cwd();
-const clientRoot = path.resolve(root, "dist", "client");
-const serverEntry = path.resolve(root, "dist", "server", "index.js");
+const webRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const clientRoot = path.resolve(webRoot, "dist", "client");
+const serverEntry = path.resolve(webRoot, "dist", "server", "index.js");
 const port = Number.parseInt(process.env.PORT ?? "3000", 10);
 const host = process.env.HOSTNAME ?? "0.0.0.0";
 const { default: app } = await import(pathToFileURL(serverEntry).href);

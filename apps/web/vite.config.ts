@@ -31,11 +31,6 @@ export default defineConfig(async () => {
         ...(isCodexSeatbeltSandbox
           ? { useFsEvents: false, usePolling: true }
           : {}),
-        ignored: [
-          "**/apps/api/.venv/**",
-          "**/apps/api/.pytest_cache/**",
-          "**/apps/api/__pycache__/**",
-        ],
       },
     },
     plugins: [
