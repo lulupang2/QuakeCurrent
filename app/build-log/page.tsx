@@ -323,8 +323,8 @@ const cycleThreeChecks = [
   },
   {
     label: "CI",
-    value: "PENDING",
-    note: "Cycle 03 remote run pending",
+    value: "PASS",
+    note: "API + web · run #30412360163",
   },
 ];
 
@@ -526,7 +526,7 @@ export default function BuildLogPage() {
           className="cycle-two-review cycle-three-contract"
         >
           <header className="cycle-two-review__header">
-            <span>CYCLE 03 · LOCAL REVIEW · 2026-07-29</span>
+            <span>CYCLE 03 · CLOSED · 2026-07-29</span>
             <h2 id="cycle-three-title">
               계약의 변경을 사람이 기억하는 대신 파이프라인이 증명한다.
             </h2>
@@ -578,9 +578,17 @@ export default function BuildLogPage() {
           </div>
 
           <p className="cycle-two-review__note">
-            위 수치는 2026-07-29 로컬 검증 결과다. Cycle 03 변경의 원격 CI는 아직
-            실행 전이므로 통과로 표시하지 않는다. Python 전이 의존성 lock과
-            production telemetry는 다음 반복의 검토 항목이다.
+            위 수치는 2026-07-29 로컬 검증 결과다. GitHub Actions{" "}
+            <a
+              href="https://github.com/lulupang2/QuakeCurrent/actions/runs/30412360163"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Verify #30412360163
+            </a>
+            에서 commit 31f9277의 API 스냅샷 gate, TypeScript 생성물 gate,
+            기존 API·웹·브라우저 검증이 모두 통과했다. Python 전이 의존성
+            lock과 production telemetry는 다음 반복의 검토 항목이다.
           </p>
         </section>
       </section>

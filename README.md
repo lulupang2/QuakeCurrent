@@ -123,5 +123,9 @@ npm run check:api-contract
 생성물을 비교합니다. WebSocket 프레임은 OpenAPI가 표현하지 못하므로
 `packages/api-client/src/ws-schema.ts`에서 별도로 관리합니다.
 
+Cycle 03 원격 실행인
+[Verify #30412360163](https://github.com/lulupang2/QuakeCurrent/actions/runs/30412360163)에서
+두 drift gate와 기존 API·웹·브라우저 검증이 모두 통과했습니다.
+
 백엔드 실행과 테스트 방법은 `apps/api/README.md`에 정리했습니다. 각 사이클의
 구현·검토 증거는 `/build-log`에서 확인할 수 있습니다.
