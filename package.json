@@ -20,6 +20,7 @@
     "test:ssr": "npm run test:ssr -w @quakecurrent/web",
     "typecheck": "npm run typecheck -w @quakecurrent/api-client && npm run typecheck -w @quakecurrent/web",
     "lint": "npm run lint -w @quakecurrent/web",
+    "check:docs": "node tools/check-doc-links.mjs",
     "generate:api-contract": "npm run contract:generate -w @quakecurrent/api-client",
     "check:api-contract": "npm run contract:check -w @quakecurrent/api-client",
     "check:api-client-contract": "npm run contract:check-types -w @quakecurrent/api-client",

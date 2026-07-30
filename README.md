@@ -7,7 +7,7 @@ QuakeCurrent는 USGS의 `all_day.geojson` 지진 피드를 60초 주기로 수�
 
 Cycle 01에서는 의도적으로 최근 24시간의 지진이라는 한 가지 현상만 다뤘습니다.
 호스팅 조건이 확정될 때까지 배포는 보류합니다. Cycle 02에서는 시간, 규모, 깊이
-필터를 클라이언트에 추가했습니다. 원본 24시간 스냅샷은 유지하면서 하나의 필터
+필터를 클라이언트에 추가했습니다. API에서 받은 원본 스냅샷은 유지하면서 하나의 필터
 결과로 목록, 지도, 통계, 현재 선택을 파생하고, 선택한 필터 상태는 공유 가능한
 URL에 보존합니다. Cycle 03에서는 FastAPI OpenAPI 문서와 TypeScript 생성물 사이의
 drift를 로컬과 CI에서 자동으로 차단합니다. Cycle 04에서는 Python 3.12를 기본
@@ -25,7 +25,7 @@ drift를 로컬과 CI에서 자동으로 차단합니다. Cycle 04에서는 Pyth
 - 백엔드·데이터: FastAPI, OpenAPI, PostGIS, Celery, Redis, WebSocket 재연결
 - 품질: 결정론적 fixture, 계약 테스트, 브라우저 E2E, 로컬 통합 스택 검증, CI
 
-Cycle 02 로컬 측정에서 24시간 스냅샷은 약 45KB였으므로 필터는 브라우저에서
+Cycle 02 로컬 측정에서 당시 UI가 받은 스냅샷은 약 45KB였으므로 필터는 브라우저에서
 처리합니다. gzip payload가 250KB를 넘거나 중급 모바일에서 필터 계산 p95가
 50ms를 넘으면 API 쿼리와 페이지네이션 승격을 다시 검토합니다. 필터 토글은
 `replaceState`를 사용해 짧은 선택마다 브라우저 방문 기록이 쌓이지 않게 했습니다.
@@ -58,6 +58,8 @@ apps/
   api/                       독립 FastAPI 서비스와 수집 worker
 packages/
   api-client/                OpenAPI REST·WebSocket TypeScript 클라이언트
+docs/                        SSOT, 아키텍처, 워크플로우와 검증 문서
+tools/                       저장소 수준 검증 스크립트
 package.json                 workspace 명령 조율
 ```
 
@@ -65,6 +67,15 @@ package.json                 workspace 명령 조율
 자체 설정과 의존성을 소유하고 Vinext를 `apps/web`에서 실행합니다. 저장소 루트의
 명령은 각 workspace로 위임하므로 기존 개발·검증 명령은 그대로 사용할 수 있습니다.
 Python 서비스와 생성 클라이언트도 각각 독립적으로 테스트할 수 있습니다.
+
+## 프로젝트 문서
+
+- [SSOT](docs/SSOT.md): 현재 제품 범위, 비범위와 권위 소스
+- [아키텍처](docs/ARCHITECTURE.md): 구성요소, 데이터·실시간 흐름과 장애 복구
+- [워크플로우](docs/WORKFLOW.md): Prototype → Plan → Autopilot → Review 실행 규칙
+- [결정 기록](docs/DECISIONS.md): 채택한 판단, 이유와 재검토 조건
+- [검증 가이드](docs/VERIFICATION.md): 로컬·CI 명령과 증거 해석
+- [문서 인덱스](docs/README.md): 문서별 책임과 권장 읽기 순서
 
 ## 로컬 개발
 
@@ -112,6 +123,7 @@ npm run test:client
 npm run test:e2e
 npm run typecheck
 npm run lint
+npm run check:docs
 npm run build
 npm run test:ssr
 npm run check:api-contract
