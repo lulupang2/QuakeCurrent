@@ -1,7 +1,7 @@
 # `@quakecurrent/api-client`
 
 QuakeCurrent의 FastAPI 백엔드와 웹 앱 사이의 계약을 고정하는 TypeScript 클라이언트 패키지입니다.
-추가 런타임 의존성 없이 표준 `fetch`와 `WebSocket` API만 사용합니다.
+추가 실행 시점 의존성 없이 표준 `fetch`와 `WebSocket` API만 사용합니다.
 
 ## 구성
 
@@ -64,7 +64,7 @@ stream.start();
 
 WebSocket 신호는 `{ seq, event_id, operation, updated_at }`만 전달합니다. 연결이 끊기면
 마지막으로 처리한 `seq` 이후를 REST로 먼저 복구하고 같은 시퀀스를 사용해 다시 연결합니다.
-`onSignal`이 성공한 뒤에만 시퀀스를 진행하므로 최소 한 번 전달(at-least-once)을 보장하며,
+`onSignal`이 성공한 뒤에만 시퀀스를 진행하므로 최소 한 번 전달을 보장하며,
 중복 프레임은 자동으로 무시합니다.
 
 ## 검증

@@ -25,7 +25,7 @@ npm run generate:api-contract
 npm run check:api-contract
 ```
 
-CI의 API 작업은 다음 검사로
+지속적 통합(CI)의 API 작업은 다음 검사로
 `packages/api-client/openapi.json`이 서버 계약과 같은지 확인합니다.
 
 ```bash
@@ -74,7 +74,7 @@ CI는 잠금 파일 최신 여부를 먼저 확인한 뒤 같은 잠금 파일�
 각각 검증합니다. 3.12 검증은 지원하는 최소 버전과의 호환성을, 3.13 검증은 현재
 개발 환경과의 호환성을 확인합니다.
 
-Compose 스택이 실행 중일 때 PostGIS, REST, WebSocket 통합 테스트까지 포함하려면
+Docker Compose 스택이 실행 중일 때 PostGIS·REST·WebSocket 통합 테스트까지 포함하려면
 다음 환경 변수를 지정합니다.
 
 ```powershell
