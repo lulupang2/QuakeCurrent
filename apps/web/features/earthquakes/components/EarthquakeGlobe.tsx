@@ -73,7 +73,7 @@ function haloRadius(event: EarthquakeEvent) {
   return 48_000 + (event.magnitude ?? 1) * 19_000;
 }
 
-function createLayers(
+export function createEarthquakeLayers(
   events: EarthquakeEvent[],
   selectedId: string | null,
   onSelect: (event: EarthquakeEvent) => void,
@@ -86,6 +86,7 @@ function createLayers(
     new ScatterplotLayer<EarthquakeEvent>({
       id: "earthquake-selection-aura",
       data: selectedEvents,
+      billboard: true,
       getPosition: (event) => [event.longitude, event.latitude],
       getRadius: haloRadius,
       radiusMinPixels: 10,
@@ -99,6 +100,7 @@ function createLayers(
     new ScatterplotLayer<EarthquakeEvent>({
       id: "earthquake-halo",
       data: events,
+      billboard: true,
       getPosition: (event) => [event.longitude, event.latitude],
       getRadius: haloRadius,
       radiusMinPixels: 10,
@@ -123,6 +125,7 @@ function createLayers(
     new ScatterplotLayer<EarthquakeEvent>({
       id: "earthquake-core",
       data: events,
+      billboard: true,
       getPosition: (event) => [event.longitude, event.latitude],
       getRadius: (event) => 11_000 + (event.magnitude ?? 1) * 6_500,
       radiusMinPixels: 4,
@@ -209,7 +212,7 @@ export default function EarthquakeGlobe({
 
     const overlay = new MapboxOverlay({
       interleaved: false,
-      layers: createLayers(events, selectedId, (event) =>
+      layers: createEarthquakeLayers(events, selectedId, (event) =>
         onSelectRef.current(event),
       ),
     });
@@ -292,7 +295,7 @@ export default function EarthquakeGlobe({
 
   useEffect(() => {
     overlayRef.current?.setProps({
-      layers: createLayers(events, selectedId, (event) =>
+      layers: createEarthquakeLayers(events, selectedId, (event) =>
         onSelectRef.current(event),
       ),
     });
