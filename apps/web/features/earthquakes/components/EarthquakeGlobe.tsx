@@ -4,6 +4,7 @@ import { MapboxOverlay } from "@deck.gl/mapbox";
 import { ScatterplotLayer } from "@deck.gl/layers";
 import {
   AttributionControl,
+  LngLat,
   Map as MapLibreMap,
   NavigationControl,
   type IControl,
@@ -71,6 +72,13 @@ function hexToRgba(hex: string, alpha: number) {
 
 function haloRadius(event: EarthquakeEvent) {
   return 48_000 + (event.magnitude ?? 1) * 19_000;
+}
+
+export function filterVisibleEarthquakes(
+  events: EarthquakeEvent[],
+  isOccluded: (event: EarthquakeEvent) => boolean,
+) {
+  return events.filter((event) => !isOccluded(event));
 }
 
 export function createEarthquakeLayers(
@@ -155,6 +163,9 @@ export default function EarthquakeGlobe({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const overlayRef = useRef<MapboxOverlay | null>(null);
+  const eventsRef = useRef(events);
+  const selectedIdRef = useRef(selectedId);
+  const updateVisibleLayersRef = useRef<() => void>(() => undefined);
   const selectedRef = useRef<string | null>(null);
   const onSelectRef = useRef(onSelect);
   const [mapError, setMapError] = useState<string | null>(null);
@@ -212,12 +223,39 @@ export default function EarthquakeGlobe({
 
     const overlay = new MapboxOverlay({
       interleaved: false,
-      layers: createEarthquakeLayers(events, selectedId, (event) =>
-        onSelectRef.current(event),
-      ),
+      layers: [],
     });
     overlayRef.current = overlay;
     map.addControl(overlay as unknown as IControl);
+
+    const updateVisibleLayers = () => {
+      const visibleEvents = filterVisibleEarthquakes(
+        eventsRef.current,
+        (earthquake) =>
+          map._camera.transform.isLocationOccluded(
+            new LngLat(earthquake.longitude, earthquake.latitude),
+          ),
+      );
+      overlay.setProps({
+        layers: createEarthquakeLayers(
+          visibleEvents,
+          selectedIdRef.current,
+          (earthquake) => onSelectRef.current(earthquake),
+        ),
+      });
+    };
+    updateVisibleLayersRef.current = updateVisibleLayers;
+
+    let layerFrameRequest: number | null = null;
+    const scheduleVisibleLayerUpdate = () => {
+      if (layerFrameRequest !== null) return;
+      layerFrameRequest = window.requestAnimationFrame(() => {
+        layerFrameRequest = null;
+        updateVisibleLayers();
+      });
+    };
+    map.on("move", scheduleVisibleLayerUpdate);
+    map.on("moveend", scheduleVisibleLayerUpdate);
 
     let frameRequest: number | null = null;
     const sampleFrameRate = () => {
@@ -256,6 +294,8 @@ export default function EarthquakeGlobe({
         setMapNotice("3D 투영을 적용하지 못해 기본 지도로 표시합니다.");
       }
 
+      scheduleVisibleLayerUpdate();
+
       setMapError(null);
       setMapReady(true);
     };
@@ -281,12 +321,18 @@ export default function EarthquakeGlobe({
     if (map.isStyleLoaded()) finishMapInitialization();
 
     return () => {
+      updateVisibleLayersRef.current = () => undefined;
       overlayRef.current = null;
       mapRef.current = null;
       if (styleLoadTimeout !== null) {
         window.clearTimeout(styleLoadTimeout);
       }
       if (frameRequest !== null) window.cancelAnimationFrame(frameRequest);
+      if (layerFrameRequest !== null) {
+        window.cancelAnimationFrame(layerFrameRequest);
+      }
+      map.off("move", scheduleVisibleLayerUpdate);
+      map.off("moveend", scheduleVisibleLayerUpdate);
       map.remove();
     };
     // The map is intentionally created once. Layers are updated below.
@@ -294,11 +340,9 @@ export default function EarthquakeGlobe({
   }, []);
 
   useEffect(() => {
-    overlayRef.current?.setProps({
-      layers: createEarthquakeLayers(events, selectedId, (event) =>
-        onSelectRef.current(event),
-      ),
-    });
+    eventsRef.current = events;
+    selectedIdRef.current = selectedId;
+    updateVisibleLayersRef.current();
   }, [events, selectedId]);
 
   useEffect(() => {
@@ -307,6 +351,7 @@ export default function EarthquakeGlobe({
 
     const applyProjection = () => {
       map.setProjection({ type: projection });
+      updateVisibleLayersRef.current();
       map.easeTo({
         pitch: projection === "globe" ? 18 : 0,
         duration: 700,
