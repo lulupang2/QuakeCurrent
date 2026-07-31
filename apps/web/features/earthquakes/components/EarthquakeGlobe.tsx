@@ -189,8 +189,12 @@ export default function EarthquakeGlobe({
         zoom: 1.25,
         minZoom: 0.55,
         maxZoom: 7,
-        pitch: 18,
-        bearing: -8,
+        pitch: 0,
+        minPitch: 0,
+        maxPitch: 0,
+        bearing: 0,
+        dragRotate: false,
+        touchPitch: false,
         attributionControl: false,
         fadeDuration: 0,
         refreshExpiredTiles: false,
@@ -206,6 +210,8 @@ export default function EarthquakeGlobe({
     }
 
     mapRef.current = map;
+    map.touchZoomRotate.disableRotation();
+    map.keyboard.disableRotation();
     map.addControl(
       new AttributionControl({
         compact: true,
@@ -214,8 +220,8 @@ export default function EarthquakeGlobe({
     );
     map.addControl(
       new NavigationControl({
-        visualizePitch: true,
-        showCompass: true,
+        visualizePitch: false,
+        showCompass: false,
         showZoom: true,
       }),
       "bottom-right",
@@ -228,7 +234,8 @@ export default function EarthquakeGlobe({
     overlayRef.current = overlay;
     map.addControl(overlay as unknown as IControl);
 
-    const updateVisibleLayers = () => {
+    let renderedMarkerKey = "";
+    const renderVisibleLayers = (force = false) => {
       const visibleEvents = filterVisibleEarthquakes(
         eventsRef.current,
         (earthquake) =>
@@ -236,6 +243,11 @@ export default function EarthquakeGlobe({
             new LngLat(earthquake.longitude, earthquake.latitude),
           ),
       );
+      const markerKey = `${selectedIdRef.current ?? ""}|${visibleEvents
+        .map((earthquake) => earthquake.id)
+        .join("|")}`;
+      if (!force && markerKey === renderedMarkerKey) return;
+      renderedMarkerKey = markerKey;
       overlay.setProps({
         layers: createEarthquakeLayers(
           visibleEvents,
@@ -244,18 +256,12 @@ export default function EarthquakeGlobe({
         ),
       });
     };
-    updateVisibleLayersRef.current = updateVisibleLayers;
+    const updateVisibleLayers = () => renderVisibleLayers();
+    const forceVisibleLayerUpdate = () => renderVisibleLayers(true);
+    updateVisibleLayersRef.current = forceVisibleLayerUpdate;
 
-    let layerFrameRequest: number | null = null;
-    const scheduleVisibleLayerUpdate = () => {
-      if (layerFrameRequest !== null) return;
-      layerFrameRequest = window.requestAnimationFrame(() => {
-        layerFrameRequest = null;
-        updateVisibleLayers();
-      });
-    };
-    map.on("move", scheduleVisibleLayerUpdate);
-    map.on("moveend", scheduleVisibleLayerUpdate);
+    map.on("move", updateVisibleLayers);
+    map.on("moveend", forceVisibleLayerUpdate);
 
     let frameRequest: number | null = null;
     const sampleFrameRate = () => {
@@ -294,7 +300,7 @@ export default function EarthquakeGlobe({
         setMapNotice("3D 투영을 적용하지 못해 기본 지도로 표시합니다.");
       }
 
-      scheduleVisibleLayerUpdate();
+      renderVisibleLayers(true);
 
       setMapError(null);
       setMapReady(true);
@@ -328,11 +334,8 @@ export default function EarthquakeGlobe({
         window.clearTimeout(styleLoadTimeout);
       }
       if (frameRequest !== null) window.cancelAnimationFrame(frameRequest);
-      if (layerFrameRequest !== null) {
-        window.cancelAnimationFrame(layerFrameRequest);
-      }
-      map.off("move", scheduleVisibleLayerUpdate);
-      map.off("moveend", scheduleVisibleLayerUpdate);
+      map.off("move", updateVisibleLayers);
+      map.off("moveend", forceVisibleLayerUpdate);
       map.remove();
     };
     // The map is intentionally created once. Layers are updated below.
@@ -352,14 +355,15 @@ export default function EarthquakeGlobe({
     const applyProjection = () => {
       map.setProjection({ type: projection });
       updateVisibleLayersRef.current();
-      map.easeTo({
-        pitch: projection === "globe" ? 18 : 0,
-        duration: 700,
-      });
     };
 
     if (map.isStyleLoaded()) applyProjection();
-    else map.once("style.load", applyProjection);
+    else {
+      map.once("style.load", applyProjection);
+      return () => {
+        map.off("style.load", applyProjection);
+      };
+    }
   }, [projection]);
 
   useEffect(() => {
