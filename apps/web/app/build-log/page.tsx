@@ -116,7 +116,7 @@ const reviewChecks = [
     icon: Globe2,
     label: "BASEMAP SOURCE",
     value: "200 OK",
-    note: "CARTO raster · inline style",
+    note: "OpenStreetMap raster · inline style",
   },
 ];
 
@@ -143,7 +143,7 @@ const reviewFindings = [
     number: "R-04",
     title: "외부 벡터 스타일과 조기 projection 적용이 지도 초기화 경로를 불안정하게 만들었다.",
     resolution:
-      "검증된 CARTO 래스터 스타일을 인라인하고 MapLibre style.load 이후에만 projection을 적용했다.",
+      "API 키가 필요 없는 OpenStreetMap 래스터 스타일을 인라인하고 MapLibre style.load 이후에만 projection을 적용했다.",
   },
   {
     number: "R-05",

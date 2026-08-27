@@ -167,4 +167,4 @@ seq + event_id + operation + updated_at
   중인 client의 즉시 누락 감지를 보장하지 않습니다.
 - 수집 lock은 55초 lease를 자동 연장하지 않아 장시간 작업에서는 중첩 가능성이
   있습니다.
-- CARTO raster basemap은 별도 외부 런타임 의존성입니다.
+- OpenStreetMap raster basemap은 별도 외부 런타임 의존성입니다.

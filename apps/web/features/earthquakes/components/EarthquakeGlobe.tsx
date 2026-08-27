@@ -29,13 +29,13 @@ const MAP_STYLE_TIMEOUT_MS = 7_000;
 const MAP_STYLE = {
   version: 8 as const,
   sources: {
-    "carto-light": {
+    "osm-light": {
       type: "raster" as const,
       tiles: [
-        "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
       ],
       tileSize: 256,
-      attribution: "© OpenStreetMap contributors © CARTO",
+      attribution: "© OpenStreetMap contributors",
     },
   },
   layers: [
@@ -47,9 +47,9 @@ const MAP_STYLE = {
       },
     },
     {
-      id: "carto-light",
+      id: "osm-light",
       type: "raster" as const,
-      source: "carto-light",
+      source: "osm-light",
       paint: {
         "raster-opacity": 0.96,
         "raster-saturation": -0.2,
