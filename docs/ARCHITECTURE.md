@@ -145,6 +145,14 @@ seq + event_id + operation + updated_at
 - 로그·metric·alert와 비용 한도
 - 실제 트래픽 기반 필터·실시간 구조 승격 여부
 
+## 저메모리 데모
+
+`docker-compose.low-memory.yml`은 공개 포트폴리오용 선택 구성입니다. PostGIS
+224MB, Redis 64MB, API 224MB, worker 96MB, Beat 48MB 상한을 사용하고 API는
+호스트의 `127.0.0.1:18081`에만 노출합니다. 외부 Caddy가 이 포트를 QuakeCurrent
+공개 API로 연결합니다. 이 구성은 관측성 컨테이너를 실행하지 않으며 운영용
+성능·가용성 기준을 의미하지 않습니다.
+
 ## 현재 한계
 
 - UI가 받는 스냅샷은 최대 120건이므로 해당 시간대의 전 지구 사건 전체를 보장하지

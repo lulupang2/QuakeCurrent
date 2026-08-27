@@ -92,6 +92,26 @@ package.json                 workspace 명령 조율
 docker compose up --build
 ```
 
+저트래픽 포트폴리오 서버에서는 저메모리 오버레이를 사용할 수 있습니다. API는
+호스트의 `127.0.0.1:18081`에만 열리고 PostGIS·Redis·Celery·API에 메모리 상한이
+적용됩니다. 외부 Caddy에서 이 포트를 QuakeCurrent API로 프록시합니다.
+
+```bash
+npm run api:up:low-memory
+```
+
+이 구성은 관측성 없이 실행하는 데모용입니다. 실제 부하나 관측성 검증이 필요하면
+기본 Compose를 사용합니다.
+
+Commerce와 같은 서버의 Caddy에서 API를 공유하려면 다음 호스트를 추가합니다.
+
+```caddyfile
+quake.jisung.lol {
+    encode zstd gzip
+    reverse_proxy 127.0.0.1:18081
+}
+```
+
 다른 터미널에서 웹 앱을 실행합니다.
 
 ```bash

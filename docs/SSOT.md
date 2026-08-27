@@ -16,6 +16,7 @@
 | 기본 웹 주소 | `http://localhost:3000` |
 | 기본 API 주소 | `http://localhost:8000` |
 | 배포 상태 | 보류. 호스팅 조건이 확정되기 전에는 운영 성능을 주장하지 않음 |
+| 저메모리 실행 | `docker-compose.low-memory.yml`, API `127.0.0.1:18081` |
 | 기준 런타임 | Node.js 22.13 이상, Python 3.12·3.13, uv 0.12.0 |
 
 ## 해결하려는 문제

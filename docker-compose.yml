@@ -4,7 +4,7 @@ x-api-environment: &api-environment
   DATABASE_URL: postgresql+asyncpg://quakecurrent:quakecurrent@postgis:5432/quakecurrent
   REDIS_URL: redis://redis:6379/0
   USGS_ALL_DAY_URL: https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
-  ALLOWED_ORIGINS: http://localhost:3000
+  ALLOWED_ORIGINS: "${ALLOWED_ORIGINS:-http://localhost:3000}"
   SNAPSHOT_WINDOW_HOURS: "30"
   USGS_TIMEOUT_SECONDS: "15"
   USGS_MAX_RESPONSE_BYTES: "8000000"
@@ -19,7 +19,7 @@ services:
       POSTGRES_USER: quakecurrent
       POSTGRES_PASSWORD: quakecurrent
     ports:
-      - "5432:5432"
+      - "${DATA_BIND_ADDRESS:-127.0.0.1}:5432:5432"
     volumes:
       - quakecurrent_postgis:/var/lib/postgresql/data
     healthcheck:
@@ -33,7 +33,7 @@ services:
     image: redis:7.4-alpine
     command: ["redis-server", "--save", "", "--appendonly", "no"]
     ports:
-      - "6379:6379"
+      - "${DATA_BIND_ADDRESS:-127.0.0.1}:6379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -50,7 +50,7 @@ services:
       - -c
       - alembic upgrade head && uvicorn quakecurrent.main:app --host 0.0.0.0 --port 8000
     ports:
-      - "8000:8000"
+      - "${API_BIND_ADDRESS:-127.0.0.1}:${API_HOST_PORT:-8000}:8000"
     depends_on:
       postgis:
         condition: service_healthy
