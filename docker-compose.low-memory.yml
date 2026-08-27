@@ -32,3 +32,14 @@ services:
       resources:
         limits:
           memory: 48M
+
+  web:
+    ports:
+      - "127.0.0.1:13000:3000"
+    build:
+      args:
+        NEXT_PUBLIC_API_BASE_URL: "https://api.quake.jisung.lol"
+    deploy:
+      resources:
+        limits:
+          memory: 128M
