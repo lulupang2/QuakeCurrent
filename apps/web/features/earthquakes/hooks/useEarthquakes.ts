@@ -105,6 +105,21 @@ export function useEarthquakes(): UseEarthquakesResult {
   useEffect(() => {
     let disposed = false;
 
+    const activateDemoSnapshot = (message: string) => {
+      liveSnapshotRef.current = false;
+      streamRef.current?.stop();
+      streamRef.current = null;
+      sequenceRef.current = 0;
+      setLastSequence(0);
+      const demoSnapshot = demoSnapshotRef.current ?? createDemoSnapshot();
+      demoSnapshotRef.current = demoSnapshot;
+      setEvents(demoSnapshot.data);
+      setGeneratedAt(demoSnapshot.meta.generated_at);
+      setConnectionState("demo");
+      setErrorMessage(message);
+      scheduleBootstrap();
+    };
+
     const scheduleBootstrap = () => {
       if (disposed || retryTimerRef.current) return;
       retryTimerRef.current = setTimeout(() => {
@@ -171,6 +186,13 @@ export function useEarthquakes(): UseEarthquakesResult {
         if (disposed) return;
 
         const normalized = snapshot.data.map(normalizeEarthquake);
+        if (normalized.length === 0) {
+          activateDemoSnapshot(
+            "API는 응답했지만 최근 지진 스냅샷이 비어 있어 검증용 데이터를 표시하고 있습니다.",
+          );
+          return;
+        }
+
         liveSnapshotRef.current = true;
         detailsLoadedRef.current.clear();
         sequenceRef.current = snapshot.meta.sequence;
@@ -182,21 +204,9 @@ export function useEarthquakes(): UseEarthquakesResult {
       } catch {
         if (disposed) return;
 
-        liveSnapshotRef.current = false;
-        streamRef.current?.stop();
-        streamRef.current = null;
-        sequenceRef.current = 0;
-        setLastSequence(0);
-        const demoSnapshot =
-          demoSnapshotRef.current ?? createDemoSnapshot();
-        demoSnapshotRef.current = demoSnapshot;
-        setEvents(demoSnapshot.data);
-        setGeneratedAt(demoSnapshot.meta.generated_at);
-        setConnectionState("demo");
-        setErrorMessage(
+        activateDemoSnapshot(
           "API가 꺼져 있어 검증용 스냅샷을 표시하고 있습니다.",
         );
-        scheduleBootstrap();
       }
     }
 
